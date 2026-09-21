@@ -37,7 +37,7 @@ class TestAccountService(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Runs once before test suite"""
+        """Runs once before all tests"""
 
     def setUp(self):
         """Runs before each test"""
@@ -121,7 +121,10 @@ class TestAccountService(TestCase):
             json=account.serialize(),
             content_type="test/html"
         )
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+        )
 
     # ADD YOUR TEST CASES HERE ...
 
@@ -165,3 +168,9 @@ class TestAccountService(TestCase):
 
         updated_account = resp.get_json()
         self.assertEqual(updated_account["name"], "Something Known")
+
+    def test_delete_account(self):
+        """It should Delete an Account"""
+        account = self._create_accounts(1)[0]
+        resp = self.client.delete(f"{BASE_URL}/{account.id}")
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
